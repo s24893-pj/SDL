@@ -9,5 +9,11 @@ set(SDL2_LIB_DIR "C:\\SDL2-2.30.1\\lib\\x64")
 
 include_directories(${SDL2_INCLUDE_DIR})
 add_executable(${PROJECT_NAME} main.cpp
+        player.cpp
+        map.cpp
+        game.h
+        map.h
+        game.cpp
+        player.h
 )
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIB_DIR}/SDL2.lib ${SDL2_LIB_DIR}/SDL2main.lib)
