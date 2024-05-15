@@ -17,6 +17,8 @@ public:
     void generateMap();
 
     void renderMap(SDL_Renderer* renderer,SDL_Texture* texture , int tileSize);
+
+    void setRowsAndCols(int r, int c);
 };
 
 #endif
