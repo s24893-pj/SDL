@@ -24,8 +24,8 @@ void Map::renderMap(SDL_Renderer* renderer, SDL_Texture* backgroundTexture, int 
 
     for (int row = 0; row < rows; ++row) {
         for (int col = 0; col < cols; ++col) {
-            int x = col * tileSize;
-            int y = row * tileSize;
+            int x = col;
+            int y = row;
 
             if (tiles[row][col] == 1) {
                 SDL_SetRenderDrawColor(renderer, wallColor.r, wallColor.g, wallColor.b, wallColor.a);
@@ -36,3 +36,5 @@ void Map::renderMap(SDL_Renderer* renderer, SDL_Texture* backgroundTexture, int 
         }
     }
 }
+
+

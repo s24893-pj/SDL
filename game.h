@@ -8,14 +8,16 @@
 
 
 
+
 class Game {
 public:
     Game();
     ~Game();
     void loop();
-    void input();
+    void input(bool &playing);
     void drawMap();
-    bool collision();
+    void update();
+    bool mapCollision(Player player);
     void createPlayer(SDL_Renderer *renderer);
     void drawPlayer();
     void render(SDL_Renderer *renderer, SDL_Texture *texture);
@@ -23,6 +25,7 @@ private:
     Player player_1;
     Player player_2;
     Map gameMap;
+    bool l, r, u = false, d, fall;
 
 
 };
