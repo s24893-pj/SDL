@@ -10,7 +10,7 @@ private:
     std::vector<std::vector<int> > tiles;
     int rows;
     int cols;
-    std::vector<object> test;
+    // std::vector<object> test;
 public:
     Map(int rows, int cols);
 
