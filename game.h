@@ -26,7 +26,7 @@ public:
     void shoot(const Player &player);
     // void renderShoot();
     int z = 0;
-
+    std::vector<Object> walls;
     std::vector<Bullet> bullets;
     void drawMapO(SDL_Renderer *renderer);
 private:
@@ -36,6 +36,8 @@ private:
     Object platformL;
     Object platformR;
     Object platformM;
+    Object WallL;
+    Object WallR;
 
 
 
