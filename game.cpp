@@ -11,15 +11,18 @@ Game::~Game() {
 void Game::render(SDL_Renderer *renderer, SDL_Texture *texture) {
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+
     SDL_RenderCopyEx(renderer, player_1.getText(), &player_1.getSource(), &player_1.getDest(), 0, nullptr,
                      SDL_FLIP_NONE);
     SDL_RenderCopyEx(renderer, player_2.getText(), &player_2.getSource(), &player_2.getDest(), 0, nullptr,
                      SDL_FLIP_NONE);
+
     SDL_RenderCopyEx(renderer, floor.getText(), &floor.getSource(), &floor.getDest(), 0, nullptr, SDL_FLIP_NONE);
     SDL_RenderCopyEx(renderer, platformL.getText(), &platformL.getSource(), &platformL.getDest(), 0, nullptr,
                      SDL_FLIP_NONE);
     SDL_RenderCopyEx(renderer, platformR.getText(), &platformR.getSource(), &platformR.getDest(), 0, nullptr,
                      SDL_FLIP_NONE);
+
     SDL_RenderPresent(renderer);
 }
 

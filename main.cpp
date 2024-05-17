@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (auto error = SDL_CreateWindowAndRenderer(1280, 720,
-                                                 SDL_WINDOW_MAXIMIZED, &window, &renderer)) {
+                                                 SDL_Init(SDL_INIT_EVERYTHING), &window, &renderer)) {
         cout << "Failed to create window and renderer: " << SDL_GetError() << endl;
         SDL_Quit();
         return 1;
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 
     game.createPlayer(renderer);
 
-    SDL_Surface *surface = SDL_LoadBMP("C:/Users/mateu/CLionProjects/SDL/map_background.bmp");
+    SDL_Surface *surface = SDL_LoadBMP("C:/Users/mateu/CLionProjects/SDL/img/map_background.bmp");
     if (surface == nullptr) {
         cout << "Failed to load map background texture: " << SDL_GetError() << endl;
         SDL_DestroyRenderer(renderer);
@@ -41,9 +41,8 @@ int main(int argc, char *argv[]) {
     static int lastTime = 0;
     bool playing = true;
     while (playing) {
-
         lastFrame = SDL_GetTicks();
-        if(lastFrame >= (lastTime+1000)) {
+        if (lastFrame >= (lastTime + 1000)) {
             std::cout << frameCount << std::endl;
             lastTime = lastFrame;
             frameCount = 0;
@@ -53,9 +52,9 @@ int main(int argc, char *argv[]) {
         game.update();
 
         frameCount++;
-        timerFPS = SDL_GetTicks()-lastFrame;
-        if(timerFPS<(1000/60)) {
-            SDL_Delay((1000/60));
+        timerFPS = SDL_GetTicks() - lastFrame;
+        if (timerFPS < (1000 / 60)) {
+            SDL_Delay((1000 / 60));
         }
 
         game.render(renderer, texture);
