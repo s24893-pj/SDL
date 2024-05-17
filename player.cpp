@@ -1,7 +1,7 @@
 #include "player.h"
 
 Player::Player() {
-
+    fuel = 10;
 }
 
 
@@ -21,6 +21,12 @@ void Player::setSource(int x, int y, int w, int h) {
     src.w=w;
     src.h=h;
 }
+
+void Player::setFuel(int fuel) {
+    this->fuel = fuel;
+}
+
+
 void Player::setImage(std::string filename, SDL_Renderer* ren) {
 
     SDL_Surface* surf;

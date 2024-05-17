@@ -85,15 +85,16 @@ void Game::update() {
         player_1.setDest(newDX, player_1.getDY());
     }
 
-    newDX = player_1.getDX();
+    // newDX = player_1.getDX();
 
     bool fall = true;
-    if (u) { newDY -= speed; } else { newDY += speed; }
+    if (u && player_1.getFuel() != 0) { newDY -= speed; player_1.setFuel(player_1.getFuel()-1);} else { newDY += speed;}
 
     if (mapCollision(player_1, floor, 0, newDY - player_1.getDY()) ||
         mapCollision(player_1, platformL, 0, newDY - player_1.getDY()) || mapCollision(
             player_1, platformR, 0, newDY - player_1.getDY())) {
         fall = false;
+        player_1.setFuel(100);
     }
 
     if (!fall) {
