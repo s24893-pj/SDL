@@ -20,7 +20,7 @@ public:
     bool mapCollision(Player player, Object o);
     bool mapCollision(Player& player, Object& o, int dx, int dy);
     void createPlayer(SDL_Renderer *renderer);
-    void drawPlayer();
+    void updatePlayer(Player &player, int speed);
     void render(SDL_Renderer *renderer, SDL_Texture *texture);
 
     void drawMapO(SDL_Renderer *renderer);

@@ -18,6 +18,8 @@ void Game::render(SDL_Renderer *renderer, SDL_Texture *texture) {
     SDL_RenderCopy(renderer, texture, nullptr, nullptr);
     SDL_RenderCopyEx(renderer, player_1.getText(), &player_1.getSource(), &player_1.getDest(), 0, nullptr,
                      SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, player_2.getText(), &player_2.getSource(), &player_2.getDest(), 0, nullptr,
+                     SDL_FLIP_NONE);
     SDL_RenderCopyEx(renderer, floor.getText(), &floor.getSource(), &floor.getDest(), 0, nullptr, SDL_FLIP_NONE);
     SDL_RenderCopyEx(renderer, platformL.getText(), &platformL.getSource(), &platformL.getDest(), 0, nullptr,
                      SDL_FLIP_NONE);
@@ -27,9 +29,13 @@ void Game::render(SDL_Renderer *renderer, SDL_Texture *texture) {
 }
 
 void Game::createPlayer(SDL_Renderer *renderer) {
-    player_1.setDest(100, 200, 40, 60);
+    player_1.setDest(100, 100, 40, 60);
     player_1.setImage("C:/Users/mateu/CLionProjects/SDL/img/player1_1.bmp", renderer);
     player_1.setSource(0, 0, 250, 500);
+
+    player_2.setDest(1180, 100, 40, 60);
+    player_2.setImage("C:/Users/mateu/CLionProjects/SDL/img/player1_1.bmp", renderer);
+    player_2.setSource(0, 0, 250, 500);
 }
 
 void Game::drawMapO(SDL_Renderer *renderer) {
@@ -70,42 +76,50 @@ void Game::input(bool &playing) {
     }
 }
 
-void Game::update() {
-    int speed = 3;
-
-    int newDX = player_1.getDX();
-    int newDY = player_1.getDY();
+void Game::updatePlayer(Player &player, int speed) {
+    int newDX = player.getDX();
+    int newDY = player.getDY();
 
     if (l) { newDX -= speed; }
     if (r) { newDX += speed; }
 
-    if (!mapCollision(player_1, floor, newDX - player_1.getDX(), 0) &&
-        !mapCollision(player_1, platformL, newDX - player_1.getDX(), 0) && !mapCollision(
-            player_1, platformR, newDX - player_1.getDX(), 0)) {
-        player_1.setDest(newDX, player_1.getDY());
+    if (!mapCollision(player, floor, newDX - player.getDX(), 0) &&
+        !mapCollision(player, platformL, newDX - player.getDX(), 0) && !mapCollision(
+            player, platformR, newDX - player.getDX(), 0)) {
+        player.setDest(newDX, player.getDY());
     }
 
     // newDX = player_1.getDX();
 
     bool fall = true;
-    if (u && player_1.getFuel() != 0) { newDY -= speed; player_1.setFuel(player_1.getFuel()-1);} else { newDY += speed;}
+    if (u && player.getFuel() != 0) {
+        newDY -= speed;
+        player.setFuel(player.getFuel() - 1);
+    } else { newDY += speed; }
 
-    if (mapCollision(player_1, floor, 0, newDY - player_1.getDY()) ||
-        mapCollision(player_1, platformL, 0, newDY - player_1.getDY()) || mapCollision(
-            player_1, platformR, 0, newDY - player_1.getDY())) {
+    if (mapCollision(player, floor, 0, newDY - player.getDY()) ||
+        mapCollision(player, platformL, 0, newDY - player.getDY()) || mapCollision(
+            player, platformR, 0, newDY - player.getDY())) {
         fall = false;
-        player_1.setFuel(100);
+        player.setFuel(100);
     }
 
     if (!fall) {
         newDY = player_1.getDY();
     } else {
-        player_1.setDest(player_1.getDX(), newDY);
+        player.setDest(player.getDX(), newDY);
     }
 
     if (!u && fall) {
-        player_1.setDest(player_1.getDX(), player_1.getDY() + speed);
+        player.setDest(player.getDX(), player.getDY() + speed);
     }
+}
+
+
+void Game::update() {
+    int speed = 3;
+    updatePlayer(player_1, speed);
+    updatePlayer(player_2, speed);
 }
 
 bool Game::mapCollision(Player &player, Object &o, int dx, int dy) {
