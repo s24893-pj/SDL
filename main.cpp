@@ -40,6 +40,9 @@ int main(int argc, char *argv[]) {
 
     static int lastTime = 0;
     bool playing = true;
+
+
+
     while (playing) {
         lastFrame = SDL_GetTicks();
         if (lastFrame >= (lastTime + 1000)) {

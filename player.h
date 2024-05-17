@@ -2,7 +2,7 @@
 #define PLAYER_H
 
 #include <SDL.h>
-#include <iostream>
+#include "object.h"
 
 class Player {
 private:
@@ -22,6 +22,9 @@ public:
     void setSource(int x, int y, int w, int h);
     void setImage(std::string filename, SDL_Renderer* renderer);
     [[nodiscard]] SDL_Texture* getText() const {return text;}
+
+    // void shoot(char direction, Player player, SDL_Renderer *renderer);
+
 
     [[nodiscard]] int getFuel() const {return fuel;}
 

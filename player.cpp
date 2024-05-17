@@ -38,3 +38,4 @@ void Player::setImage(std::string filename, SDL_Renderer* ren) {
     text = SDL_CreateTextureFromSurface(ren, surf);
 
 }
+

@@ -1,6 +1,6 @@
 #include "game.h"
 
-Game::Game(){
+Game::Game() {
     player_1.setId(1);
     player_2.setId(2);
 }
@@ -11,6 +11,10 @@ Game::~Game() {
 void Game::render(SDL_Renderer *renderer, SDL_Texture *texture) {
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+
+    for (Bullet bullet : bullets) {
+        bullet.render(renderer);
+    }
 
     SDL_RenderCopyEx(renderer, player_1.getText(), &player_1.getSource(), &player_1.getDest(), 0, nullptr,
                      SDL_FLIP_NONE);
@@ -65,6 +69,9 @@ void Game::input(bool &playing) {
                 r = true;
                 l = false;
             }
+            if (event.key.keysym.sym == SDLK_SPACE) {
+                shoot(player_1);
+            }
             if (event.key.keysym.sym == SDLK_UP) { u2 = true; }
             if (event.key.keysym.sym == SDLK_LEFT) {
                 l2 = true;
@@ -73,6 +80,9 @@ void Game::input(bool &playing) {
             if (event.key.keysym.sym == SDLK_RIGHT) {
                 r2 = true;
                 l2 = false;
+            }
+            if (event.key.keysym.sym == SDLK_SLASH) {
+                shoot(player_2);
             }
         }
         if (event.type == SDL_KEYUP) {
@@ -87,42 +97,48 @@ void Game::input(bool &playing) {
 }
 
 void Game::updatePlayer(Player &player, int speed) {
-    if (player.getId() == 1){
-    int newDX = player.getDX();
-    int newDY = player.getDY();
+    if (player.getId() == 1) {
+        int newDX = player.getDX();
+        int newDY = player.getDY();
 
-    if (l) { newDX -= speed; }
-    if (r) { newDX += speed; }
+        if (l) { newDX -= speed; }
+        if (r) { newDX += speed; }
 
-    if (!mapCollision(player, floor, newDX - player.getDX(), 0) &&
-        !mapCollision(player, platformL, newDX - player.getDX(), 0) && !mapCollision(
-            player, platformR, newDX - player.getDX(), 0)) {
-        player.setDest(newDX, player.getDY());
-    }
+        if (!mapCollision(player, floor, newDX - player.getDX(), 0) &&
+            !mapCollision(player, platformL, newDX - player.getDX(), 0) && !mapCollision(
+                player, platformR, newDX - player.getDX(), 0)) {
+            player.setDest(newDX, player.getDY());
+        }
 
-    bool fall = true;
-    if (u && player.getFuel() != 0) {
-        newDY -= speed;
-        player.setFuel(player.getFuel() - 1);
-    } else { newDY += speed; }
+        bool fall = true;
+        if (u && player.getFuel() != 0) {
+            newDY -= speed;
+            player.setFuel(player.getFuel() - 1);
+        } else { newDY += speed; }
 
-    if (mapCollision(player, floor, 0, newDY - player.getDY()) ||
-        mapCollision(player, platformL, 0, newDY - player.getDY()) || mapCollision(
-            player, platformR, 0, newDY - player.getDY())) {
-        fall = false;
-        player.setFuel(100);
-    }
+        if (mapCollision(player, floor, 0, newDY - player.getDY()) ||
+            mapCollision(player, platformL, 0, newDY - player.getDY()) || mapCollision(
+                player, platformR, 0, newDY - player.getDY())) {
+            fall = false;
+            player.setFuel(100);
+        }
 
-    if (!fall) {
-        newDY = player_1.getDY();
+        if (!fall) {
+            newDY = player_1.getDY();
+        } else {
+            player.setDest(player.getDX(), newDY);
+        }
+
+        if (!u && fall) {
+            player.setDest(player.getDX(), player.getDY() + speed);
+        }
+
+        for (Bullet bullet: bullets)
+            if (shootCollision(player_1, bullet, 0, 0)) {
+                player_1.setDest(200, 200);
+            }
+
     } else {
-        player.setDest(player.getDX(), newDY);
-    }
-
-    if (!u && fall) {
-        player.setDest(player.getDX(), player.getDY() + speed);
-    }
-    }else {
         int newDX = player.getDX();
         int newDY = player.getDY();
 
@@ -133,7 +149,7 @@ void Game::updatePlayer(Player &player, int speed) {
             !mapCollision(player, platformL, newDX - player.getDX(), 0) && !mapCollision(
                 player, platformR, newDX - player.getDX(), 0)) {
             player.setDest(newDX, player.getDY());
-                }
+        }
 
         bool fall = true;
         if (u2 && player.getFuel() != 0) {
@@ -146,7 +162,7 @@ void Game::updatePlayer(Player &player, int speed) {
                 player, platformR, 0, newDY - player.getDY())) {
             fall = false;
             player.setFuel(100);
-                }
+        }
 
         if (!fall) {
             newDY = player_1.getDY();
@@ -157,6 +173,10 @@ void Game::updatePlayer(Player &player, int speed) {
         if (!u2 && fall) {
             player.setDest(player.getDX(), player.getDY() + speed);
         }
+        for (Bullet bullet: bullets)
+        if (shootCollision(player_2, bullet, 0, 0)) {
+            player_2.setDest(200, 200);
+        }
     }
 }
 
@@ -165,6 +185,10 @@ void Game::update() {
     int speed = 3;
     updatePlayer(player_1, speed);
     updatePlayer(player_2, speed);
+    for(Bullet &bullet : bullets) {
+        bullet.update();
+    }
+
 }
 
 bool Game::mapCollision(Player &player, Object &o, int dx, int dy) {
@@ -180,4 +204,29 @@ bool Game::mapCollision(Player &player, Object &o, int dx, int dy) {
 
     return (playerRight > objectLeft && playerLeft < objectRight &&
             playerBottom > objectTop && playerTop < objectBottom);
+}
+
+bool Game::shootCollision(Player &player, Bullet &o, int dx, int dy) {
+    int playerLeft = player.getDX() + dx;
+    int playerRight = player.getDX() + player.getDW() + dx;
+    int playerTop = player.getDY() + dy;
+    int playerBottom = player.getDY() + player.getDH() + dy;
+
+    int objectLeft = o.getDX();
+    int objectRight = o.getDX() + o.getDW();
+    int objectTop = o.getDY();
+    int objectBottom = o.getDY() + o.getDH();
+
+    return (playerRight > objectLeft && playerLeft < objectRight &&
+            playerBottom > objectTop && playerTop < objectBottom);
+}
+
+void Game::shoot(const Player &player) {
+    if (player.getId() == 1) {
+        Bullet bullet(player.getDX()+player.getDW(), player.getDY() + player.getDH()/2, 5);
+        bullets.push_back(bullet);
+    } else {
+        Bullet bullet(player.getDX()-10, player.getDY() + player.getDH()/2, -5);
+        bullets.push_back(bullet);
+    }
 }
