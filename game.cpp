@@ -1,16 +1,11 @@
 #include "game.h"
 
-Game::Game(): gameMap(710, 1270) {
+Game::Game(){
     player_1.setId(1);
     player_2.setId(2);
 }
 
 Game::~Game() {
-}
-
-
-void Game::drawMap() {
-    gameMap.generateMap();
 }
 
 void Game::render(SDL_Renderer *renderer, SDL_Texture *texture) {
@@ -34,7 +29,7 @@ void Game::createPlayer(SDL_Renderer *renderer) {
     player_1.setSource(0, 0, 250, 500);
 
     player_2.setDest(1180, 100, 40, 60);
-    player_2.setImage("C:/Users/mateu/CLionProjects/SDL/img/player1_1.bmp", renderer);
+    player_2.setImage("C:/Users/mateu/CLionProjects/SDL/img/player2_1.bmp", renderer);
     player_2.setSource(0, 0, 250, 500);
 }
 
@@ -67,16 +62,29 @@ void Game::input(bool &playing) {
                 r = true;
                 l = false;
             }
+            if (event.key.keysym.sym == SDLK_UP) { u2 = true; }
+            if (event.key.keysym.sym == SDLK_LEFT) {
+                l2 = true;
+                r2 = false;
+            }
+            if (event.key.keysym.sym == SDLK_RIGHT) {
+                r2 = true;
+                l2 = false;
+            }
         }
         if (event.type == SDL_KEYUP) {
             if (event.key.keysym.sym == SDLK_w) { u = false; }
             if (event.key.keysym.sym == SDLK_a) { l = false; }
             if (event.key.keysym.sym == SDLK_d) { r = false; }
+            if (event.key.keysym.sym == SDLK_UP) { u2 = false; }
+            if (event.key.keysym.sym == SDLK_LEFT) { l2 = false; }
+            if (event.key.keysym.sym == SDLK_RIGHT) { r2 = false; }
         }
     }
 }
 
 void Game::updatePlayer(Player &player, int speed) {
+    if (player.getId() == 1){
     int newDX = player.getDX();
     int newDY = player.getDY();
 
@@ -88,8 +96,6 @@ void Game::updatePlayer(Player &player, int speed) {
             player, platformR, newDX - player.getDX(), 0)) {
         player.setDest(newDX, player.getDY());
     }
-
-    // newDX = player_1.getDX();
 
     bool fall = true;
     if (u && player.getFuel() != 0) {
@@ -112,6 +118,42 @@ void Game::updatePlayer(Player &player, int speed) {
 
     if (!u && fall) {
         player.setDest(player.getDX(), player.getDY() + speed);
+    }
+    }else {
+        int newDX = player.getDX();
+        int newDY = player.getDY();
+
+        if (l2) { newDX -= speed; }
+        if (r2) { newDX += speed; }
+
+        if (!mapCollision(player, floor, newDX - player.getDX(), 0) &&
+            !mapCollision(player, platformL, newDX - player.getDX(), 0) && !mapCollision(
+                player, platformR, newDX - player.getDX(), 0)) {
+            player.setDest(newDX, player.getDY());
+                }
+
+        bool fall = true;
+        if (u2 && player.getFuel() != 0) {
+            newDY -= speed;
+            player.setFuel(player.getFuel() - 1);
+        } else { newDY += speed; }
+
+        if (mapCollision(player, floor, 0, newDY - player.getDY()) ||
+            mapCollision(player, platformL, 0, newDY - player.getDY()) || mapCollision(
+                player, platformR, 0, newDY - player.getDY())) {
+            fall = false;
+            player.setFuel(100);
+                }
+
+        if (!fall) {
+            newDY = player_1.getDY();
+        } else {
+            player.setDest(player.getDX(), newDY);
+        }
+
+        if (!u2 && fall) {
+            player.setDest(player.getDX(), player.getDY() + speed);
+        }
     }
 }
 

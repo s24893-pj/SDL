@@ -3,7 +3,6 @@
 
 #include <SDL.h>
 #include "player.h"
-#include "map.h"
 #include "object.h"
 
 
@@ -31,8 +30,8 @@ private:
     Object platformL;
     Object platformR;
     Object platformM;
-    Map gameMap;
     bool l, r, u = false, d, fall;
+    bool l2, r2, u2 = false, d2;
 
 
 };
