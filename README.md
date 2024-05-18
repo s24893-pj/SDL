@@ -21,3 +21,6 @@
 | LEFT      | ruch lewo     |
 | RIGHT      | ruch prawo     |
 | /      | strzał     |
+
+## Prompty: 
+[Zapis chatu](https://chatgpt.com/share/ad23f38a-5e5e-4b7d-adaf-7652528d42ae).
