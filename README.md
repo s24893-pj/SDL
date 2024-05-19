@@ -24,3 +24,8 @@
 
 ## Prompty: 
 [Zapis chatu](https://chatgpt.com/share/ad23f38a-5e5e-4b7d-adaf-7652528d42ae).
+
+
+## Assets:  
+[Background Ruins](https://www.pexels.com/photo/black-concrete-building-2416463/)
+Grafiki graczy powstały z elementów w canvie przekolorowanych na potrzeby gry
